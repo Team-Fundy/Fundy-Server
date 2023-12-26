@@ -1,0 +1,11 @@
+rootProject.name = 'Fundy-Server'
+include 'input'
+include 'output'
+include 'input:api-adapter'
+include 'domain'
+include 'domain:user'
+include 'application'
+include 'application:user-service'
+include 'output:jpa-adapter'
+include 'application:core-exception'
+

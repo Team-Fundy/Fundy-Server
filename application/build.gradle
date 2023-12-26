@@ -1,0 +1,9 @@
+project(":application") {
+    bootJar{enabled = false}
+    jar {enabled = true}
+
+    dependencies {
+        api project(":application:core-exception")
+        api project(":application:user-service")
+    }
+}

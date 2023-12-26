@@ -1,0 +1,15 @@
+version: '3.9'
+name: fundy-server
+services:
+  mysql:
+    image: mysql:8.0.33-oracle
+    container_name: fundy-db
+    volumes:
+      - ./conf/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+      - ./conf/mysql/init-sql:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=fundy
+      - TZ="Asia/Seoul"
+    ports:
+      - "3312:3306"

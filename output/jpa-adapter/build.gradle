@@ -1,0 +1,11 @@
+project(":output:jpa-adapter") {
+    bootJar{enabled = false}
+    jar {enabled = true}
+
+    dependencies {
+        implementation project(":application")
+        api 'org.springframework.boot:spring-boot-starter-data-jpa'
+        api 'org.springframework.boot:spring-boot-starter-jdbc'
+        runtimeOnly 'com.mysql:mysql-connector-j'
+    }
+}
