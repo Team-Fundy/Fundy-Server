@@ -67,7 +67,7 @@ project(":application:user-service") { // :상위모듈:하위모듈
 6. Input Adapter와 Output Adapter 코딩
 
 ### 3. 개발 유의사항
-Fundy-BE 개발 시 유의사항입니다.
+Fundy-Server 개발 시 유의사항입니다.
 #### 서버 설정 파일
 `application.yml`과 같은 설정 파일은 보안 때문에 노션에서 따로 관리합니다.  
 외부 인원들과 공유를 금합니다.   
@@ -102,6 +102,6 @@ Fundy-BE 개발 시 유의사항입니다.
     2. `Docker Desktop`이 켜진 상태에서 터미널에 `docker compose up -d --build` 명령어를 실행합니다. (VCS의 도커 관련 익스텐션을 써도 괜찮습니다.)
     3. 서버가 빌드하고 실행하기 까지 시간이 걸리기 때문에 조금 기달려야합니다(1~3분: 실행환경에 따라 상이)
         - 정확히 실행되었는지 확인하고 싶으면 `Docker Desktop`에서 모든 컨테이너가 실행 중인지와 `Fundy-Server` 컨테이너의 `Log`를 확인해주세요
-        - `Fundy-Server` 컨테이너에서 `Log`에 `Started FundyBeApplication in 2.056 seconds (process running for 2.375)` 같은 것이 찍혀있으면 정상적으로 실행된 것입니다
+        - `Fundy-Server` 컨테이너에서 `Log`에 `Started FundyApiApplication in 2.056 seconds (process running for 2.375)` 같은 것이 찍혀있으면 정상적으로 실행된 것입니다
 4. 서버 실행 확인
     1. `localhost:8080`를 통해서 서버가 실행되었는지 확인해주세요. (Whitelabel Error Page도 괜찮습니다.)
