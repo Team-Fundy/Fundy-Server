@@ -52,7 +52,7 @@ project(":application:user-service") { // :상위모듈:하위모듈
     dependencies {
         api project(":domain:user") // api와 implmentation의 차이 숙지
         implementation project(":application:core-exception") // Exception 
-        implementation "org.springframework:spring-context" // 서비스에서 사용되는 라이브러리
+        implementation 'org.springframework.boot:spring-boot-starter-web' // 서비스에서 사용되는 라이브러리
         implementation "org.springframework:spring-tx" // 서비스에서 사용되는 라이브러리
     }
 }
