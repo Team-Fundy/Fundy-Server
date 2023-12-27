@@ -51,7 +51,7 @@ public class User {
         return new User(email, nickname, password);
     }
 
-    private static boolean validateNickname(String nickname) {
+    public static boolean validateNickname(String nickname) {
         return nickname.length() >= 2 && nickname.length() <= 30;
     }
 
