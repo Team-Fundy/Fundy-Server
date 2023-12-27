@@ -7,7 +7,7 @@ Fundy의 스프링 서버입니다.
 [4. 쉽게 서버 실행하기 ](#4-쉽게-서버-실행하기)
 
 ### 1. 프로젝트 구조
-```agsl
+```text
 ├── README.md
 ├── application
 │   ├── core-exception
