@@ -7,38 +7,42 @@ import com.fundy.domain.user.vos.Image;
 import com.fundy.domain.user.vos.Password;
 import com.fundy.domain.user.vos.Phone;
 import com.fundy.domain.user.vos.UserId;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
+@Getter
 public class User {
-    @Getter
     private UserId id;
-
-    @Getter
     private Email email;
-
-    @Getter
     private String nickname;
-
     private Password password;
-
-    @Getter
     private Phone phone;
-
-    @Getter
     private Image profile;
     private List<Authority> authorities = new ArrayList<>();
-
-    @Getter
     private CreatorInfo creatorInfo;
     private List<DeliveryAddress> deliveryAddresses = new ArrayList<>();
 
+    @Builder
+    private User(UserId userId, Email email, String nickname, Password password, Phone phone, Image profile, CreatorInfo creatorInfo, List<DeliveryAddress> deliveryAddresses) {
+        this.id = userId;
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.phone = phone;
+        this.profile = profile;
+        this.creatorInfo = creatorInfo;
+        this.deliveryAddresses = deliveryAddresses;
+    }
+
     private User(Email email, String nickname, Password password) {
-        this.id = UserId.newInstance();
         this.email = email;
         this.nickname = nickname;
         this.password = password;
@@ -52,28 +56,12 @@ public class User {
     }
 
     public static boolean validateNickname(String nickname) {
-        return nickname.length() >= 2 && nickname.length() <= 30 && !nickname.contains("시발");
+        return nickname != null && nickname.length() >= 2 && nickname.length() <= 30;
     }
 
 
     public List<String> getAuthorities() {
         return authorities.stream().map(Authority::name).toList();
-    }
-
-    public String getCreatorName() {
-        return creatorInfo.getName();
-    }
-
-    public Image getCreatorBackground() {
-        return creatorInfo.getBackground();
-    }
-
-    public String getCreatorDescription() {
-        return creatorInfo.getDescription();
-    }
-
-    public Image getCreatorProfile() {
-        return creatorInfo.getProfile();
     }
 
     public String getPassword() {

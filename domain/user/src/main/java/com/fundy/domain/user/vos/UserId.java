@@ -9,8 +9,18 @@ public class UserId {
         this.id = UUID.randomUUID();
     }
 
+    private UserId(UUID uuid) {
+        this.id = uuid;
+    }
+
     public static UserId newInstance() {
         return new UserId();
+    }
+
+    public static UserId of(UUID id) {
+        if(id == null)
+            throw new IllegalArgumentException("id가 존재하지 않습니다");
+        return new UserId(id);
     }
 
     public UUID toUUID() {

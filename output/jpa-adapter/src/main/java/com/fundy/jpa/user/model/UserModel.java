@@ -10,9 +10,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -24,22 +27,28 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "fundy_user")
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @DynamicInsert
 @DynamicUpdate
+@ToString
 public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "nickname")
+    @Column(name = "nickname", nullable = false, unique = true)
     private String nickname;
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "PROFILE")
+    private String profile;
 
     @Column(name = "phone")
     private String phone;
@@ -60,13 +69,4 @@ public class UserModel {
     @CollectionTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     @Column(name = "authority")
     private List<String> authorities = new ArrayList<>();
-
-    @Builder
-    private UserModel(UUID id, String email, String nickname, String password, List<String> authorities) {
-        this.id = id;
-        this.email = email;
-        this.nickname = nickname;
-        this.password = password;
-        this.authorities = authorities;
-    }
 }

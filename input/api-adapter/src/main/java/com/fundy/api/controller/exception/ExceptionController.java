@@ -32,12 +32,14 @@ public class ExceptionController {
     @ExceptionHandler({DuplicateInstanceException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final GlobalExceptionResponse handleDuplicateInstanceException(final DuplicateInstanceException e) {
+        log.error("Duplicate Exception", e);
         return makeResponse(e.getMessage());
     }
 
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final GlobalExceptionResponse handleValidationException(final ValidationException e) {
+        log.error("Valid Exception", e);
         return makeResponse(e.getMessage());
     }
 
