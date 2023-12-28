@@ -1,7 +1,7 @@
 package com.fundy.application.user;
 
-import com.fundy.application.exception.CoreExceptionFactory;
-import com.fundy.application.exception.CoreExceptionType;
+import com.fundy.application.exception.custom.DuplicateInstanceException;
+import com.fundy.application.exception.custom.ValidationException;
 import com.fundy.application.user.in.SignUpUseCase;
 import com.fundy.application.user.in.dto.req.SignUpRequest;
 import com.fundy.application.user.in.dto.res.SignUpResponse;
@@ -24,22 +24,30 @@ public class AuthService implements SignUpUseCase {
 
     @Transactional
     @Override
-    public SignUpResponse signUp(SignUpRequest signUpRequest) {
+    public SignUpResponse signUp(final SignUpRequest signUpRequest) {
         if (validUserPort.existsByEmail(signUpRequest.getEmail()) ||
-            validUserPort.existsByEmail(signUpRequest.getNickname()))
-            throw CoreExceptionFactory.createWithMessage(CoreExceptionType.DUPLICATE, "중복인 유저 존재");
+            validUserPort.existsByNickname(signUpRequest.getNickname()))
+            throw new DuplicateInstanceException("중복인 유저 존재");
 
+        try {
+            return trySignUp(signUpRequest);
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("이메일 / 닉네임 / 비밀번호 양식이 맞지 않습니다");
+        }
+    }
+
+    private SignUpResponse trySignUp(final SignUpRequest signUpRequest) {
         User user = User.emailSignUp(
             Email.of(signUpRequest.getEmail()),
             signUpRequest.getNickname(),
             Password.createEncodedPassword(signUpRequest.getPassword()));
 
         saveUserPort.saveUser(SaveUserCommand.builder()
-                .id(user.getId().toUUID())
-                .email(user.getEmail().getAddress())
-                .nickname(user.getNickname())
-                .password(user.getPassword())
-                .authorities(user.getAuthorities())
+            .id(user.getId().toUUID())
+            .email(user.getEmail().getAddress())
+            .nickname(user.getNickname())
+            .password(user.getPassword())
+            .authorities(user.getAuthorities())
             .build());
 
         return SignUpResponse.builder()
