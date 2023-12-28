@@ -1,7 +1,8 @@
 package com.fundy.api.controller.exception;
 
 import com.fundy.api.common.response.GlobalExceptionResponse;
-import com.fundy.application.exception.DuplicateInstanceException;
+import com.fundy.application.exception.custom.DuplicateInstanceException;
+import com.fundy.application.exception.custom.ValidationException;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -21,7 +22,7 @@ public class ExceptionController {
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final GlobalExceptionResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-        log.error("잘못되 RequestBody");
+        log.error("잘못된 RequestBody", e);
         return makeResponse(e.getBindingResult()
             .getFieldErrors()
             .stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -31,6 +32,12 @@ public class ExceptionController {
     @ExceptionHandler({DuplicateInstanceException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final GlobalExceptionResponse handleDuplicateInstanceException(final DuplicateInstanceException e) {
+        return makeResponse(e.getMessage());
+    }
+
+    @ExceptionHandler({ValidationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public final GlobalExceptionResponse handleValidationException(final ValidationException e) {
         return makeResponse(e.getMessage());
     }
 

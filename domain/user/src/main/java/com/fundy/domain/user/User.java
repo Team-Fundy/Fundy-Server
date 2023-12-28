@@ -52,7 +52,7 @@ public class User {
     }
 
     public static boolean validateNickname(String nickname) {
-        return nickname.length() >= 2 && nickname.length() <= 30;
+        return nickname.length() >= 2 && nickname.length() <= 30 && !nickname.contains("시발");
     }
 
 
