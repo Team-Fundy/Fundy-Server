@@ -8,16 +8,23 @@ import com.fundy.domain.user.User;
 import com.fundy.jpa.user.mapper.UserMapper;
 import com.fundy.jpa.user.model.UserModel;
 import com.fundy.jpa.user.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserPersistenceAdapter implements SaveUserPort, LoadUserPort, ValidUserPort {
     private final UserRepository userRepository;
     private final UserMapper mapper;
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     @Override
     public Optional<User> findByEmail(String email) {
@@ -40,13 +47,12 @@ public class UserPersistenceAdapter implements SaveUserPort, LoadUserPort, Valid
     }
 
     @Override
-    public User saveUser(SaveUserCommand command) {
-        return mapper.entityToDomain(userRepository.save(UserModel.builder()
-            .id(command.getId())
+    public UUID saveUser(SaveUserCommand command) {
+        return userRepository.save(UserModel.builder()
             .email(command.getEmail())
             .nickname(command.getNickname())
             .password(command.getPassword())
             .authorities(command.getAuthorities())
-            .build()));
+            .build()).getId();
     }
 }

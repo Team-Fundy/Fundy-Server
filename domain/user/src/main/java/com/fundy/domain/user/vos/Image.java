@@ -12,8 +12,14 @@ import java.net.URL;
 public class Image {
     private URL url;
 
-    public static Image newInstance(String url) throws MalformedURLException {
-        return new Image(new URL(url));
+    public static Image newInstance(String url) {
+        try {
+            return new Image(new URL(url));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            System.out.println(url);
+            throw new IllegalArgumentException("URL 형식이 맞지 않습니다");
+        }
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.fundy.application.user.out;
 
 import com.fundy.application.user.out.command.SaveUserCommand;
-import com.fundy.domain.user.User;
+
+import java.util.UUID;
 
 public interface SaveUserPort {
-    User saveUser(SaveUserCommand command);
+    UUID saveUser(SaveUserCommand command);
 }
