@@ -27,10 +27,6 @@ public class AuthService implements SignUpUseCase {
     @Transactional
     @Override
     public SignUpResponse signUp(final SignUpRequest signUpRequest) {
-        if (validUserPort.existsByEmail(signUpRequest.getEmail()) ||
-            validUserPort.existsByNickname(signUpRequest.getNickname()))
-            throw new DuplicateInstanceException("중복인 유저 존재");
-
         try {
             return trySignUp(signUpRequest);
         } catch (IllegalArgumentException e) {
@@ -44,6 +40,10 @@ public class AuthService implements SignUpUseCase {
             Email.of(signUpRequest.getEmail()),
             signUpRequest.getNickname(),
             Password.createEncodedPassword(signUpRequest.getPassword()));
+
+        if (validUserPort.existsByEmail(signUpRequest.getEmail()) ||
+            validUserPort.existsByNickname(signUpRequest.getNickname()))
+            throw new DuplicateInstanceException("중복인 유저 존재");
 
         saveUserPort.saveUser(SaveUserCommand.builder()
             .email(user.getEmail().getAddress())
