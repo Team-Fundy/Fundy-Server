@@ -4,5 +4,6 @@ project(":output") {
 
     dependencies {
         api project(":output:jpa-adapter")
+        api project(":output:email-adapter")
     }
 }

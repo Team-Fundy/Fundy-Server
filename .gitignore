@@ -7,10 +7,9 @@ build/
 *.idea
 
 **/src/main/resources/application*.yml
+**/src/main/resources/application*.properties
 
-domain/email-token/src/main/resources/
-!output/email-adapter/src/main/resources/templates/*.html
-output/email-adapter/src/main/resources/
+!output/email-adapter/src/main/resources/templates/
 
 
 # Log file
