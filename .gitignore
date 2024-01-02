@@ -8,6 +8,11 @@ build/
 
 **/src/main/resources/application*.yml
 
+domain/email-token/src/main/resources/
+!output/email-adapter/src/main/resources/templates/*.html
+output/email-adapter/src/main/resources/
+
+
 # Log file
 *.log
 
