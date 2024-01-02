@@ -1,0 +1,13 @@
+project(":application:email-service") {
+    bootJar{enabled = false}
+    jar {enabled = true}
+
+    dependencies {
+        implementation project(":domain:email-token")
+        implementation project(":application:user-service")
+        implementation project(":application:core-exception")
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation "org.springframework:spring-tx"
+        implementation 'org.apache.commons:commons-lang3:3.12.0'
+    }
+}

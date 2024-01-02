@@ -17,9 +17,9 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserService 유닛 테스트")
-class UserServiceTest {
+class ValidUserServiceTest {
     @InjectMocks
-    private UserService userService;
+    private ValidUserService validUserService;
     @Mock
     private ValidUserPort validUserPort;
 
@@ -31,7 +31,7 @@ class UserServiceTest {
         given(validUserPort.existsByNickname(nickname)).willReturn(false);
 
         // when
-        IsAvailableNicknameResponse result = userService.isAvailableNickname(nickname);
+        IsAvailableNicknameResponse result = validUserService.isAvailableNickname(nickname);
 
         // then
         Assertions.assertThat(result.getTargetNickname()).isEqualTo(nickname);
@@ -47,7 +47,7 @@ class UserServiceTest {
         String nickname = "하";
 
         // when
-        IsAvailableNicknameResponse result = userService.isAvailableNickname(nickname);
+        IsAvailableNicknameResponse result = validUserService.isAvailableNickname(nickname);
 
         // then
         Assertions.assertThat(result.getTargetNickname()).isEqualTo(nickname);
@@ -63,7 +63,7 @@ class UserServiceTest {
         given(validUserPort.existsByNickname(nickname)).willReturn(true);
 
         // when
-        IsAvailableNicknameResponse result = userService.isAvailableNickname(nickname);
+        IsAvailableNicknameResponse result = validUserService.isAvailableNickname(nickname);
 
         // then
         Assertions.assertThat(result.getTargetNickname()).isEqualTo(nickname);
