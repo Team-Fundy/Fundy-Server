@@ -13,3 +13,12 @@ services:
       - TZ="Asia/Seoul"
     ports:
       - "3312:3306"
+
+  redis:
+    image: redis:latest
+    container_name: fundy-redis
+    ports:
+      - "6379:6379"
+    command: redis-server /usr/local/conf/redis.conf
+    volumes:
+      - ./conf/redis/redis.conf:/usr/local/conf/redis.conf

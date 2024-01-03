@@ -1,7 +1,7 @@
 package com.fundy.api.controller.auth;
 
 import com.fundy.api.BaseIntegrationTest;
-import com.fundy.api.controller.auth.req.SignUpRequestBody;
+import com.fundy.api.controller.auth.dto.req.SignUpRequestBody;
 import com.fundy.application.user.out.SaveUserPort;
 import com.fundy.application.user.out.command.SaveUserCommand;
 import org.junit.jupiter.api.DisplayName;

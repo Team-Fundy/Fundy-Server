@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
     public User modelToDomain(UserModel model) {
+        if (model == null)
+            return null;
+
         User.UserBuilder userBuilder = User.builder();
 
         userBuilder
