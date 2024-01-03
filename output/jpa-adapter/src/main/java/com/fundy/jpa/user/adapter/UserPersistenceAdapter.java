@@ -8,8 +8,6 @@ import com.fundy.domain.user.User;
 import com.fundy.jpa.user.mapper.UserMapper;
 import com.fundy.jpa.user.model.UserModel;
 import com.fundy.jpa.user.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,17 +21,15 @@ import java.util.UUID;
 public class UserPersistenceAdapter implements SaveUserPort, LoadUserPort, ValidUserPort {
     private final UserRepository userRepository;
     private final UserMapper mapper;
-    @PersistenceContext
-    private final EntityManager entityManager;
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return Optional.empty();
+        return Optional.ofNullable(mapper.modelToDomain(userRepository.findByEmail(email).orElse(null)));
     }
 
     @Override
     public Optional<User> findByNickname(String nickname) {
-        return Optional.empty();
+        return Optional.ofNullable(mapper.modelToDomain(userRepository.findByNickname(nickname).orElse(null)));
     }
 
     @Override

@@ -11,4 +11,5 @@ include 'application:core-exception'
 include 'application:email-service'
 include 'domain:email-token'
 include 'output:email-adapter'
+include 'output:redis-adapter'
 
