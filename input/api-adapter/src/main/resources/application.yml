@@ -21,3 +21,4 @@ spring:
   profiles:
     include:
       - jpa
+      - redis
