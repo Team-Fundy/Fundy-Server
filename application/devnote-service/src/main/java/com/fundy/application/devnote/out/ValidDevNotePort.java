@@ -1,5 +1,5 @@
 package com.fundy.application.devnote.out;
 
 public interface ValidDevNotePort {
-    boolean existById(String id);
+    boolean existById(Long id);
 }

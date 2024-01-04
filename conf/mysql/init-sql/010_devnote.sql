@@ -1,8 +1,9 @@
 create table devnote
 (
-    title varchar(255),
-    contents varchar(255),
+    id bigint not null auto_increment primary key ,
+    title varchar(255) not null,
+    contents varchar(255) not null,
     thumbnail varchar(255),
-    likes varchar(255)
+    likes int
 
 );

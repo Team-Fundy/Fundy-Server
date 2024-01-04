@@ -9,5 +9,4 @@ import lombok.*;
 public class FindByIdResponse {
     private String title;
     private String contents;
-    private Long projectId;
 }

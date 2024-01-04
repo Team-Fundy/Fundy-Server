@@ -19,11 +19,11 @@ public class DevNotePersistenceAdapter implements LoadDevNotePort, ValidDevNoteP
 
     //ID로 조회
     @Override
-    public Optional<DevNote> findById(String id) {
+    public Optional<DevNote> findById(Long id) {
         return Optional.empty();
     }
     @Override
-    public boolean existById(String id) {
+    public boolean existById(Long id) {
         return true;
     }
 

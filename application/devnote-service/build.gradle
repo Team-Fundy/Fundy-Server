@@ -1,3 +1,6 @@
+dependencies {
+    implementation project(path: ':output:jpa-adapter')
+}
 project(":application:devnote-service") {
     bootJar{enabled = false}
     jar {enabled = true}
