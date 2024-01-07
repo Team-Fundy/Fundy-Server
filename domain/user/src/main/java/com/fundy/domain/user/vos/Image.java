@@ -12,7 +12,7 @@ import java.net.URL;
 public class Image {
     private URL url;
 
-    public static Image newInstance(String url) {
+    public static Image of(String url) {
         try {
             return new Image(new URL(url));
         } catch (MalformedURLException e) {

@@ -1,6 +1,8 @@
 package com.fundy.domain.user;
 
 import com.fundy.domain.user.enums.Authority;
+import com.fundy.domain.user.interfaces.SecurityUser;
+import com.fundy.domain.user.interfaces.TokenizationUser;
 import com.fundy.domain.user.vos.CreatorInfo;
 import com.fundy.domain.user.vos.Email;
 import com.fundy.domain.user.vos.Image;
@@ -10,7 +12,6 @@ import com.fundy.domain.user.vos.UserId;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,8 +19,7 @@ import java.util.List;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(toBuilder = true)
-@Getter
-public class User {
+public class User implements SecurityUser, TokenizationUser {
     private UserId id;
     private Email email;
     private String nickname;
@@ -31,13 +31,14 @@ public class User {
     private List<DeliveryAddress> deliveryAddresses = new ArrayList<>();
 
     @Builder
-    private User(UserId userId, Email email, String nickname, Password password, Phone phone, Image profile, CreatorInfo creatorInfo, List<DeliveryAddress> deliveryAddresses) {
+    private User(List<Authority> authorities, UserId userId, Email email, String nickname, Password password, Phone phone, Image profile, CreatorInfo creatorInfo, List<DeliveryAddress> deliveryAddresses) {
         this.id = userId;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
         this.phone = phone;
         this.profile = profile;
+        this.authorities = authorities;
         this.creatorInfo = creatorInfo;
         this.deliveryAddresses = deliveryAddresses;
     }
@@ -60,11 +61,27 @@ public class User {
     }
 
 
+    @Override
+    public String getEmailAddress() {
+        return email.getAddress();
+    }
+
+    @Override
+    public String getEncodedPassword() {
+        return password.getEncodedPassword();
+    }
+
     public List<String> getAuthorities() {
         return authorities.stream().map(Authority::name).toList();
     }
 
-    public String getPassword() {
-        return password.getEncodedPassword();
+    @Override
+    public String getNickname() {
+        return nickname;
+    }
+
+    @Override
+    public String getProfileUrl() {
+        return profile.toString();
     }
 }

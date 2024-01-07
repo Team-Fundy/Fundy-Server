@@ -3,11 +3,20 @@ package com.fundy.api.controller.user;
 import com.fundy.api.BaseIntegrationTest;
 import com.fundy.application.user.out.SaveUserPort;
 import com.fundy.application.user.out.command.SaveUserCommand;
+import com.fundy.domain.user.User;
+import com.fundy.domain.user.UserTokenProvider;
+import com.fundy.domain.user.dto.res.TokenInfo;
+import com.fundy.domain.user.enums.Authority;
+import com.fundy.domain.user.vos.Email;
+import com.fundy.domain.user.vos.Image;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -79,5 +88,35 @@ class UserControllerTest extends BaseIntegrationTest {
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(jsonPath("$.result.targetNickname").value(targetNickname));
         resultActions.andExpect(jsonPath("$.result.available").value(false));
+    }
+
+    @DisplayName("[성공] 토큰으로 유저 정보 조회")
+    @Test
+    void getUserInfo() throws Exception {
+        // given
+        String emailAddress = "don0103@naver.com";
+        String nickname = "nickname";
+        String profile = "http://www.naver.com";
+        List<Authority> authorities = Arrays.asList(Authority.NORMAL);
+        TokenInfo tokenInfo = UserTokenProvider.INSTANCE.generateToken(User.builder()
+                .email(Email.of(emailAddress))
+                .profile(Image.of(profile))
+                .nickname(nickname)
+                .authorities(authorities)
+            .build());
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/user/info")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", String.format("%s %s", tokenInfo.getGrantType(), tokenInfo.getAccessToken()))
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print());
+
+        // then
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.result.email").value(emailAddress));
+        resultActions.andExpect(jsonPath("$.result.nickname").value(nickname));
+        resultActions.andExpect(jsonPath("$.result.profile").value(profile));
+        resultActions.andExpect(jsonPath("$.result.authorities.length()").value(authorities.size()));
     }
 }
