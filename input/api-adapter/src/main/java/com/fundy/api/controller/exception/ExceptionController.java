@@ -3,6 +3,7 @@ package com.fundy.api.controller.exception;
 import com.fundy.api.common.response.GlobalExceptionResponse;
 import com.fundy.application.exception.custom.DuplicateInstanceException;
 import com.fundy.application.exception.custom.NoInstanceException;
+import com.fundy.application.exception.custom.UnAuthorizedException;
 import com.fundy.application.exception.custom.ValidationException;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +30,10 @@ public class ExceptionController {
             .stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
             .collect(Collectors.toList()));
     }
-
-    @ExceptionHandler({NoInstanceException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public final GlobalExceptionResponse handleNoInstanceException(final NoInstanceException e) {
+    
+    @ExceptionHandler({UnAuthorizedException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public final GlobalExceptionResponse handleUnAuthorizedException(final UnAuthorizedException e) {
         return makeResponse(e.getMessage());
     }
 
@@ -40,6 +41,13 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.CONFLICT)
     public final GlobalExceptionResponse handleDuplicateInstanceException(final DuplicateInstanceException e) {
         log.error("Duplicate Exception", e);
+        return makeResponse(e.getMessage());
+    }
+
+    @ExceptionHandler({NoInstanceException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public final GlobalExceptionResponse handleNoInstanceException(final NoInstanceException e) {
+        log.error("NoInstance Exception", e);
         return makeResponse(e.getMessage());
     }
 

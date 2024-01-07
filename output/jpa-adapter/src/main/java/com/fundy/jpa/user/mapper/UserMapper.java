@@ -24,7 +24,7 @@ public class UserMapper {
             .email(Email.of(model.getEmail()))
             .nickname(model.getNickname())
             .password(Password.of(model.getPassword()))
-            .profile(Image.newInstance(model.getProfile()))
+            .profile(Image.of(model.getProfile()))
             .authorities(model.getAuthorities().stream()
                 .map(Authority::valueOf).toList());
 
@@ -35,8 +35,8 @@ public class UserMapper {
         CreatorInfo creatorInfo = CreatorInfo.builder()
             .name(model.getCreatorName())
             .description(model.getCreatorDescription())
-            .profile(Image.newInstance(model.getCreatorProfile()))
-            .background(Image.newInstance(model.getCreatorBackground()))
+            .profile(Image.of(model.getCreatorProfile()))
+            .background(Image.of(model.getCreatorBackground()))
             .build();
 
         userBuilder.creatorInfo(creatorInfo);
