@@ -9,6 +9,9 @@ public class Email {
     }
 
     public static Email of(String address) {
+        if (address == null)
+            throw new IllegalArgumentException("이메일 주소가 존재하지 않습니다");
+
         if(!isEmailFormat(address))
             throw new IllegalArgumentException("이메일 표현식이 올바르지 않습니다");
         return new Email(address);

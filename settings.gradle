@@ -10,4 +10,7 @@ include 'application:user-service'
 include 'application:devnote-service'
 include 'output:jpa-adapter'
 include 'application:core-exception'
+include 'application:email-service'
+include 'domain:email-token'
+include 'output:email-adapter'
 

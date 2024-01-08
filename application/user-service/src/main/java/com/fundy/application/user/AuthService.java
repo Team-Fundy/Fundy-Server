@@ -12,12 +12,14 @@ import com.fundy.domain.user.User;
 import com.fundy.domain.user.vos.Email;
 import com.fundy.domain.user.vos.Password;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService implements SignUpUseCase {
     private final SaveUserPort saveUserPort;
     private final ValidUserPort validUserPort;
@@ -25,13 +27,10 @@ public class AuthService implements SignUpUseCase {
     @Transactional
     @Override
     public SignUpResponse signUp(final SignUpRequest signUpRequest) {
-        if (validUserPort.existsByEmail(signUpRequest.getEmail()) ||
-            validUserPort.existsByNickname(signUpRequest.getNickname()))
-            throw new DuplicateInstanceException("중복인 유저 존재");
-
         try {
             return trySignUp(signUpRequest);
         } catch (IllegalArgumentException e) {
+            log.error("에러 발생",e);
             throw new ValidationException("이메일 / 닉네임 / 비밀번호 양식이 맞지 않습니다");
         }
     }
@@ -42,8 +41,11 @@ public class AuthService implements SignUpUseCase {
             signUpRequest.getNickname(),
             Password.createEncodedPassword(signUpRequest.getPassword()));
 
+        if (validUserPort.existsByEmail(signUpRequest.getEmail()) ||
+            validUserPort.existsByNickname(signUpRequest.getNickname()))
+            throw new DuplicateInstanceException("중복인 유저 존재");
+
         saveUserPort.saveUser(SaveUserCommand.builder()
-            .id(user.getId().toUUID())
             .email(user.getEmail().getAddress())
             .nickname(user.getNickname())
             .password(user.getPassword())

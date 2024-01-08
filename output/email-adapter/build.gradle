@@ -1,0 +1,10 @@
+project(":output:email-adapter") {
+    bootJar{enabled = false}
+    jar {enabled = true}
+
+    dependencies {
+        implementation project(":application:email-service")
+        implementation 'org.springframework.boot:spring-boot-starter-mail:3.1.2'
+        implementation 'org.thymeleaf:thymeleaf:3.1.1.RELEASE'
+    }
+}

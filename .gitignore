@@ -7,6 +7,13 @@ build/
 *.idea
 
 **/src/main/resources/application*.yml
+**/src/main/resources/application*.properties
+
+!output/email-adapter/src/main/resources/templates/
+
+
+# Log file
+*.log
 
 ### STS ###
 .apt_generated

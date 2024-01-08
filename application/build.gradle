@@ -5,6 +5,6 @@ project(":application") {
     dependencies {
         api project(":application:core-exception")
         api project(":application:user-service")
-        api project(":application:devnote-service")
+        api project(":application:email-service")
     }
 }
