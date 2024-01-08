@@ -22,8 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class DevNoteController {
-    private final DevNoteService devNoteService;
-    //개발노트 조회
+    private final DevNoteFindByIdUseCase devNoteFindByIdUseCase;
+
+    @Operation(summary = "개발노트 id로 조회", description = "개발노트의 id로 개발노트 상세 정보를 조회함")
+    @ApiResponse(responseCode = "200", description = "성공", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "에러 발생",
+            content = @Content(schema = @Schema(implementation = GlobalExceptionResponse.class)))
     @GetMapping("/{id}")
     public final GlobalResponse<DevNoteDetailResponse> getDevNoteById(@PathVariable(name = "id") Long id) {
         return GlobalResponse.<DevNoteDetailResponse>builder()

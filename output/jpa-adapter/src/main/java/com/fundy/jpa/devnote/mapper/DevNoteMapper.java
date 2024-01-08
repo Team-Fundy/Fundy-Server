@@ -1,7 +1,10 @@
 package com.fundy.jpa.devnote.mapper;
 
 import com.fundy.domain.devnote.DevNote;
+import com.fundy.domain.devnote.vos.DevNoteId;
+import com.fundy.domain.devnote.vos.Image;
 import com.fundy.jpa.devnote.model.DevNoteModel;
+import org.springframework.stereotype.Component;
 
 //일단 따라함 수정 필요
 @Component
@@ -9,5 +12,17 @@ public class DevNoteMapper {
     public final DevNoteModel domainToEntity(DevNote devNote) {
         return DevNoteModel.builder().build();
     }
-    public final DevNote entityToDomain(DevNoteModel model) { return null; }
+
+    public final DevNote entityToDomain(DevNoteModel model) {
+        if (model == null)
+            return null;
+
+        return DevNote.builder()
+                .id(DevNoteId.of(model.getId()))
+                .title(model.getTitle())
+                .contents(model.getContents())
+                .thumbnail(Image.of(model.getThumbnail()))
+                .createdAt(model.getCreatedAt())
+                .build();
+    }
 }

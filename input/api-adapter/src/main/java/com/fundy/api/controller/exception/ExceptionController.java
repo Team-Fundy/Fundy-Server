@@ -2,6 +2,7 @@ package com.fundy.api.controller.exception;
 
 import com.fundy.api.common.response.GlobalExceptionResponse;
 import com.fundy.application.exception.custom.DuplicateInstanceException;
+import com.fundy.application.exception.custom.NoInstanceException;
 import com.fundy.application.exception.custom.ValidationException;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,12 @@ public class ExceptionController {
             .getFieldErrors()
             .stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
             .collect(Collectors.toList()));
+    }
+
+    @ExceptionHandler({NoInstanceException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public final GlobalExceptionResponse handleNoInstanceException(final NoInstanceException e) {
+        return makeResponse(e.getMessage());
     }
 
     @ExceptionHandler({DuplicateInstanceException.class})
