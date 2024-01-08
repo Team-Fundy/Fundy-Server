@@ -1,11 +1,11 @@
 package com.fundy.jpa.devnote.repository;
 
-import com.fundy.domain.devnote.DevNote;
+import com.fundy.jpa.devnote.model.DevNoteModel;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
 
 @Repository
-public interface DevNoteRepository {
-    boolean existById(Long id);
+public interface DevNoteRepository extends JpaRepository<DevNoteModel, Long> {
+    boolean existsById(Long id);
 }

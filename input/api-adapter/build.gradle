@@ -1,6 +1,3 @@
-dependencies {
-    implementation project(path: ':application:devnote-service')
-}
 project(":input:api-adapter") {
     bootJar{enabled = true}
     jar {enabled = true}

@@ -14,13 +14,19 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class DevNotePersistenceAdapter implements LoadDevNotePort, ValidDevNotePort {
-//    private final DevNoteRepository devNoteRepository;
-//    private final DevNoteMapper mapper;
+    private final DevNoteRepository devNoteRepository;
+    private final DevNoteMapper mapper;
 
     //ID로 조회
     @Override
     public Optional<DevNote> findById(Long id) {
-        return Optional.empty();
+        // 도메인 모델 vs 영속성 모델
+        /*
+        * 도메인 모델: 도메인 로직을 가지고 있는 주요 모델 (DevNote)
+        * 영속성 모델: DB와 데이터를 주고받기 위한 객체 모델 (DevNoteModel)
+        * mapper: 도메인 모델 <-> 영속성 모델
+        * */
+        return Optional.ofNullable(mapper.entityToDomain(devNoteRepository.findById(id).orElse(null)));
     }
     @Override
     public boolean existById(Long id) {

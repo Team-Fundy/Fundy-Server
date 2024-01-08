@@ -4,6 +4,7 @@ import com.fundy.domain.devnote.DevNote;
 import com.fundy.jpa.devnote.model.DevNoteModel;
 
 //일단 따라함 수정 필요
+@Component
 public class DevNoteMapper {
     public final DevNoteModel domainToEntity(DevNote devNote) {
         return DevNoteModel.builder().build();

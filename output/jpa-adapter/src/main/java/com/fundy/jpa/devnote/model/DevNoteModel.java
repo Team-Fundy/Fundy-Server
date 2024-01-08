@@ -7,33 +7,33 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
-@Table(name = "fundy_devnote")
+@Table(name = "devnote")
 @Getter
 @DynamicInsert
 @DynamicUpdate
 public class DevNoteModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", columnDefinition = "BINARY(16)")
-    private UUID id;
-
-    @Column(name = "nickname")
-    private String nickname;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
     @Column(name = "title")
     private String title;
     @Column(name = "contents")
     private String contents;
-
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdAt;
+    @Column(name = "thumbnail")
+    private String thumbnail;
 
     @Builder
-    private DevNoteModel(UUID id, String nickname, String title, String contents) {
-        this.id = id;
-        this.nickname = nickname;
+    private DevNoteModel(String title, String contents, String thumbnail) {
+        this.thumbnail = thumbnail;
         this.title = title;
         this.contents = contents;
     }

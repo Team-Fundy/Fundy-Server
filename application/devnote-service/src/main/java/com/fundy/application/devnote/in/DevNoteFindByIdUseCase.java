@@ -1,8 +1,7 @@
 package com.fundy.application.devnote.in;
 
-import com.fundy.application.devnote.in.dto.req.FindByIdRequest;
-import com.fundy.application.devnote.in.dto.res.FindByIdResponse;
+import com.fundy.application.devnote.in.dto.res.DevNoteDetailResponse;
 
 public interface DevNoteFindByIdUseCase {
-    FindByIdResponse findById(Long id);
+    DevNoteDetailResponse findById(Long id);
 }
