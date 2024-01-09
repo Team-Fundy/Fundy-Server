@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "유저 이메일 회원가입 Request")
+@Schema(name = "유저 이메일 회원가입 RequestBody")
 public class SignUpRequestBody {
     @NotNull(message = "이메일은 필수 입니다")
     @Email(message = "올바른 이메일 형식이 아닙니다")
