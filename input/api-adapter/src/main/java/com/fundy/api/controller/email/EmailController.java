@@ -39,7 +39,7 @@ public class EmailController {
         @Parameter(description = "인증받을 이메일", example = "dongwon0103@naver.com", required = true)
         @RequestParam(name = "email") String email) {
         return GlobalResponse.<SendVerifyCodeResponse>builder()
-            .message("유저 생성 완료")
+            .message("인증 메일 발송")
             .result(sendVerifyCodeUseCase.sendVerifyCode(email))
             .build();
     }
@@ -51,7 +51,7 @@ public class EmailController {
     @PostMapping("/verify")
     public final GlobalResponse<IsVerifyEmailResponse> verifyEmail(@RequestBody @Valid final VerifyEmailRequestBody requestBody) {
         return GlobalResponse.<IsVerifyEmailResponse>builder()
-            .message("이메일 조회")
+            .message("이메일 검증")
             .result(isVerifyEmailUseCase.isVerifyEmail(IsVerifyEmailRequest.builder()
                     .code(requestBody.getCode())
                     .token(requestBody.getToken())

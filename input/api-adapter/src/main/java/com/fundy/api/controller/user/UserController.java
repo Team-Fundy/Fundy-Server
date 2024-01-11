@@ -51,6 +51,8 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "성공", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "에러 발생",
         content = @Content(schema = @Schema(implementation = GlobalExceptionResponse.class)))
+    @ApiResponse(responseCode = "401", description = "토큰 문제",
+        content = @Content(schema = @Schema(implementation = GlobalExceptionResponse.class)))
     @GetMapping("/info")
     public final GlobalResponse<TokenizationUserInfoResponse> getUserInfoByToken(HttpServletRequest request) {
         return GlobalResponse.<TokenizationUserInfoResponse>builder()

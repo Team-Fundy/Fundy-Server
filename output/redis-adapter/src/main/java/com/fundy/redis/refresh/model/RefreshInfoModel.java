@@ -20,6 +20,8 @@ public class RefreshInfoModel {
     @Id
     private String id; // email -> id로 설정해야 에러 안남
     private List<String> authorities;
+    private String nickname;
+    private String profile;
     @Indexed
     private String refreshToken;
 
