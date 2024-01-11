@@ -2,13 +2,14 @@ package com.fundy.api.controller.user;
 
 import com.fundy.api.BaseIntegrationTest;
 import com.fundy.application.user.out.SaveUserPort;
-import com.fundy.application.user.out.command.SaveUserCommand;
+import com.fundy.application.user.out.dto.req.SaveUserCommand;
 import com.fundy.domain.user.User;
 import com.fundy.domain.user.UserTokenProvider;
-import com.fundy.domain.user.dto.res.TokenInfo;
+import com.fundy.domain.user.TokenInfo;
 import com.fundy.domain.user.enums.Authority;
 import com.fundy.domain.user.vos.Email;
 import com.fundy.domain.user.vos.Image;
+import com.fundy.domain.user.vos.Nickname;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +102,7 @@ class UserControllerTest extends BaseIntegrationTest {
         TokenInfo tokenInfo = UserTokenProvider.INSTANCE.generateToken(User.builder()
                 .email(Email.of(emailAddress))
                 .profile(Image.of(profile))
-                .nickname(nickname)
+                .nickname(Nickname.of(nickname))
                 .authorities(authorities)
             .build());
 
@@ -118,5 +119,22 @@ class UserControllerTest extends BaseIntegrationTest {
         resultActions.andExpect(jsonPath("$.result.nickname").value(nickname));
         resultActions.andExpect(jsonPath("$.result.profile").value(profile));
         resultActions.andExpect(jsonPath("$.result.authorities.length()").value(authorities.size()));
+    }
+
+    @DisplayName("[실패] 토큰으로 유저 정보 조회: 잘못된 토큰")
+    @Test
+    void getUserInfoFailWithInvalidToken() throws Exception {
+        // given
+        String invalidToken = "invalidToken";
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/user/info")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", String.format("%s %s", UserTokenProvider.INSTANCE.getGrantType(), invalidToken))
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print());
+
+        // then
+        resultActions.andExpect(status().isUnauthorized());
     }
 }

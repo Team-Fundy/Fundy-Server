@@ -1,4 +1,4 @@
-package com.fundy.application.user.out.command;
+package com.fundy.application.user.out.dto.req;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,8 +12,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class SaveRefreshInfoCommand {
+public class SaveUserCommand {
     private String email;
+    private String nickname;
+    private String password;
     private List<String> authorities;
-    private String refreshToken;
 }

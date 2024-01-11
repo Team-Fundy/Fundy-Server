@@ -11,10 +11,11 @@ import com.fundy.application.user.in.dto.res.SignUpResponse;
 import com.fundy.application.user.out.LoadUserPort;
 import com.fundy.application.user.out.SaveUserPort;
 import com.fundy.application.user.out.ValidUserPort;
-import com.fundy.application.user.out.command.SaveUserCommand;
+import com.fundy.application.user.out.dto.req.SaveUserCommand;
 import com.fundy.domain.user.User;
 import com.fundy.domain.user.interfaces.SecurityUser;
 import com.fundy.domain.user.vos.Email;
+import com.fundy.domain.user.vos.Nickname;
 import com.fundy.domain.user.vos.Password;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ public class AuthService implements SignUpUseCase, GetSecurityInfoUseCase {
     private SignUpResponse trySignUp(final SignUpRequest signUpRequest) {
         User user = User.emailSignUp(
             Email.of(signUpRequest.getEmail()),
-            signUpRequest.getNickname(),
+            Nickname.of(signUpRequest.getNickname()),
             Password.createEncodedPassword(signUpRequest.getPassword()));
 
         if (validUserPort.existsByEmail(signUpRequest.getEmail()) ||

@@ -2,6 +2,7 @@ package com.fundy.api.security;
 
 import com.fundy.api.security.entrypoint.AuthenticationFailEntryPoint;
 import com.fundy.api.security.filter.TokenAuthenticationFilter;
+import com.fundy.api.security.handler.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final AuthenticationFailEntryPoint authenticationFailEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -37,7 +39,13 @@ public class SecurityConfig {
             .addFilterBefore(tokenAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(handlerConfig ->
-                handlerConfig.authenticationEntryPoint(authenticationFailEntryPoint));
+                handlerConfig
+                    .authenticationEntryPoint(authenticationFailEntryPoint)
+                    .accessDeniedHandler(customAccessDeniedHandler))
+            .authorizeHttpRequests(auth ->
+                auth
+                    .requestMatchers("/user/info").authenticated()
+                    .anyRequest().permitAll());
 
         return http.build();
     }

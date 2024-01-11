@@ -1,6 +1,6 @@
 package com.fundy.application.user.out;
 
-import com.fundy.application.user.out.command.SaveUserCommand;
+import com.fundy.application.user.out.dto.req.SaveUserCommand;
 
 import java.util.UUID;
 
