@@ -32,6 +32,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean isReissueUrl(HttpServletRequest request) {
-        return false;
+        return request.getRequestURI().equals("/auth/reissue");
     }
 }

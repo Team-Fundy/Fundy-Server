@@ -1,11 +1,10 @@
 package com.fundy.domain.user;
 
-import com.fundy.domain.user.dto.res.IsVerifyAccessTokenInfo;
-import com.fundy.domain.user.dto.res.TokenInfo;
 import com.fundy.domain.user.enums.Authority;
 import com.fundy.domain.user.interfaces.TokenizationUser;
 import com.fundy.domain.user.vos.Email;
 import com.fundy.domain.user.vos.Image;
+import com.fundy.domain.user.vos.Nickname;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -20,7 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.security.Key;
-import java.util.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -54,25 +54,23 @@ public class UserTokenProvider {
     }
 
     public TokenInfo generateToken(final TokenizationUser tokenizationUser) {
-        final long ACCESS_DURATION = 2 * 60 * 60 * 1000L; // 2시간
-        final long REFRESH_DURATION = 30 * 24 * 60 * 60 * 1000L; // 30일
+        return generateToken(tokenizationUser, LocalDateTime.now());
+    }
 
-        Date now = new Date();
-        Date AccessExpirationDate = new Date(now.getTime() + ACCESS_DURATION);
-        Date RefreshExpirationDate = new Date(now.getTime() + REFRESH_DURATION);
-
+    public TokenInfo generateToken(final TokenizationUser tokenizationUser, LocalDateTime now) {
         String accessToken = Jwts.builder()
             .setSubject(tokenizationUser.getEmailAddress())
             .claim(AUTH_CLAIM_NAME, tokenizationUser.getAuthorities())
             .claim(NICKNAME_CLAIM_NAME, tokenizationUser.getNickname())
             .claim(PROFILE_CLAIM_NAME, tokenizationUser.getProfileUrl())
-            .setIssuedAt(now)
-            .setExpiration(AccessExpirationDate)
+            .setIssuedAt(Timestamp.valueOf(now))
+            .setExpiration(Timestamp.valueOf(now.plusHours(2)))
             .signWith(accessKey, SignatureAlgorithm.HS256)
             .compact();
 
         String refreshToken = Jwts.builder()
-            .setExpiration(RefreshExpirationDate)
+            .setExpiration(Timestamp.valueOf(now.plusDays(30)))
+            .setSubject(tokenizationUser.getEmailAddress())
             .signWith(refreshKey, SignatureAlgorithm.HS256)
             .compact();
 
@@ -83,7 +81,7 @@ public class UserTokenProvider {
             .build();
     }
 
-    public Optional<TokenizationUser> getTokenizationUserInfo(String accessToken) {
+    public Optional<TokenizationUser> getTokenizationUserByAccessToken(String accessToken) {
         Claims claims = getClaims(accessKey, accessToken);
         if (claims == null)
             return Optional.empty();
@@ -93,9 +91,17 @@ public class UserTokenProvider {
         return Optional.ofNullable(User.builder()
                 .email(Email.of(claims.getSubject()))
                 .authorities(authorities.stream().map(Authority::valueOf).toList())
-                .nickname((String) claims.get(NICKNAME_CLAIM_NAME))
+                .nickname(Nickname.of((String) claims.get(NICKNAME_CLAIM_NAME)))
                 .profile(Image.of((String) claims.get(PROFILE_CLAIM_NAME)))
             .build());
+    }
+
+    public Optional<Email> getEmailByRefreshToken(String refreshToken) {
+        Claims claims = getClaims(refreshKey, refreshToken);
+        if (claims == null)
+            return Optional.empty();
+
+        return Optional.of(Email.of(claims.getSubject()));
     }
 
     private Claims getClaims(Key key, String token) {
@@ -110,15 +116,15 @@ public class UserTokenProvider {
         }
     }
 
-    public IsVerifyAccessTokenInfo isVerifyAccessToken(String accessToken) {
-        try {
-            if (isVerifyToken(accessKey, accessToken))
-                return IsVerifyAccessTokenInfo.of(true, true);
+    public boolean isVerifyAccessToken(String accessToken) {
+        return isVerifyToken(accessKey, accessToken);
+    }
 
-            return IsVerifyAccessTokenInfo.of(false, false);
-        } catch (ExpiredJwtException e) {
-            return IsVerifyAccessTokenInfo.of(false, true);
-        }
+    public boolean isVerifyRefreshToken(String refreshToken) {
+        if (refreshToken == null)
+            return false;
+
+        return isVerifyToken(refreshKey, refreshToken);
     }
 
     private boolean isVerifyToken(Key key, String token) throws ExpiredJwtException {
@@ -128,7 +134,7 @@ public class UserTokenProvider {
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
-            throw e;
+            return false;
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
         } catch (IllegalArgumentException e) {
@@ -136,5 +142,16 @@ public class UserTokenProvider {
         }
 
         return false;
+    }
+
+    public boolean canRefresh(String accessToken) {
+        try {
+            Jwts.parserBuilder().setSigningKey(accessKey).build().parseClaimsJws(accessToken);
+            return true;
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 }

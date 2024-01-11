@@ -16,8 +16,6 @@ public class Image {
         try {
             return new Image(new URL(url));
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-            System.out.println(url);
             throw new IllegalArgumentException("URL 형식이 맞지 않습니다");
         }
     }

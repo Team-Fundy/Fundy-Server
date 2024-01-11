@@ -3,7 +3,7 @@ package com.fundy.jpa.user.adapter;
 import com.fundy.application.user.out.LoadUserPort;
 import com.fundy.application.user.out.SaveUserPort;
 import com.fundy.application.user.out.ValidUserPort;
-import com.fundy.application.user.out.command.SaveUserCommand;
+import com.fundy.application.user.out.dto.req.SaveUserCommand;
 import com.fundy.domain.user.User;
 import com.fundy.jpa.user.mapper.UserMapper;
 import com.fundy.jpa.user.model.UserModel;

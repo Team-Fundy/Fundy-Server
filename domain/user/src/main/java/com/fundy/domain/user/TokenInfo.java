@@ -1,4 +1,4 @@
-package com.fundy.domain.user.dto.res;
+package com.fundy.domain.user;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

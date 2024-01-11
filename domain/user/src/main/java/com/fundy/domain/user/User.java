@@ -6,6 +6,7 @@ import com.fundy.domain.user.interfaces.TokenizationUser;
 import com.fundy.domain.user.vos.CreatorInfo;
 import com.fundy.domain.user.vos.Email;
 import com.fundy.domain.user.vos.Image;
+import com.fundy.domain.user.vos.Nickname;
 import com.fundy.domain.user.vos.Password;
 import com.fundy.domain.user.vos.Phone;
 import com.fundy.domain.user.vos.UserId;
@@ -22,7 +23,7 @@ import java.util.List;
 public class User implements SecurityUser, TokenizationUser {
     private UserId id;
     private Email email;
-    private String nickname;
+    private Nickname nickname;
     private Password password;
     private Phone phone;
     private Image profile;
@@ -31,7 +32,7 @@ public class User implements SecurityUser, TokenizationUser {
     private List<DeliveryAddress> deliveryAddresses = new ArrayList<>();
 
     @Builder
-    private User(List<Authority> authorities, UserId userId, Email email, String nickname, Password password, Phone phone, Image profile, CreatorInfo creatorInfo, List<DeliveryAddress> deliveryAddresses) {
+    private User(List<Authority> authorities, UserId userId, Email email, Nickname nickname, Password password, Phone phone, Image profile, CreatorInfo creatorInfo, List<DeliveryAddress> deliveryAddresses) {
         this.id = userId;
         this.email = email;
         this.nickname = nickname;
@@ -43,23 +44,16 @@ public class User implements SecurityUser, TokenizationUser {
         this.deliveryAddresses = deliveryAddresses;
     }
 
-    private User(Email email, String nickname, Password password) {
+    private User(Email email, Nickname nickname, Password password) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
         this.authorities.addAll(Arrays.asList(Authority.NORMAL, Authority.CREATOR));
     }
 
-    public static User emailSignUp(Email email, String nickname, Password password) {
-        if (!validateNickname(nickname))
-            throw new IllegalArgumentException("닉네임이 올바르지 않습니다");
+    public static User emailSignUp(Email email, Nickname nickname, Password password) {
         return new User(email, nickname, password);
     }
-
-    public static boolean validateNickname(String nickname) {
-        return nickname != null && nickname.length() >= 2 && nickname.length() <= 30;
-    }
-
 
     @Override
     public String getEmailAddress() {
@@ -77,7 +71,7 @@ public class User implements SecurityUser, TokenizationUser {
 
     @Override
     public String getNickname() {
-        return nickname;
+        return nickname.toString();
     }
 
     @Override
