@@ -9,4 +9,7 @@ public interface RefreshInfoRepository extends CrudRepository<RefreshInfoModel, 
     RefreshInfoModel save(RefreshInfoModel refreshInfoModel);
     Optional<RefreshInfoModel> findById(String id);
     Optional<RefreshInfoModel> findByRefreshToken(String refreshToken);
+
+    @Override
+    void delete(RefreshInfoModel entity);
 }

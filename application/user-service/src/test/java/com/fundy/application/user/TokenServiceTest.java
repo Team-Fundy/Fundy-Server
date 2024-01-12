@@ -8,6 +8,7 @@ import com.fundy.application.user.out.LoadBanedTokenPort;
 import com.fundy.application.user.out.LoadRefreshInfoPort;
 import com.fundy.application.user.out.LoadUserPort;
 import com.fundy.application.user.out.SaveRefreshInfoPort;
+import com.fundy.application.user.out.UpdateRefreshInfoPort;
 import com.fundy.domain.user.TokenInfo;
 import com.fundy.domain.user.User;
 import com.fundy.domain.user.UserTokenProvider;
@@ -45,6 +46,9 @@ class TokenServiceTest {
     private LoadRefreshInfoPort loadRefreshInfoPort;
     @Mock
     private LoadBanedTokenPort loadBanedTokenPort;
+
+    @Mock
+    private UpdateRefreshInfoPort updateRefreshInfoPort;
 
     @DisplayName("[성공] 토큰 생성")
     @Test
