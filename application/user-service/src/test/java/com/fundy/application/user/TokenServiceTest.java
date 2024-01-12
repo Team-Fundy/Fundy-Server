@@ -4,6 +4,7 @@ import com.fundy.application.exception.custom.NoInstanceException;
 import com.fundy.application.exception.custom.UnAuthorizedException;
 import com.fundy.application.user.in.dto.res.TokenInfoResponse;
 import com.fundy.application.user.in.dto.res.TokenizationUserInfoResponse;
+import com.fundy.application.user.out.LoadBanedTokenPort;
 import com.fundy.application.user.out.LoadRefreshInfoPort;
 import com.fundy.application.user.out.LoadUserPort;
 import com.fundy.application.user.out.SaveRefreshInfoPort;
@@ -31,7 +32,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-// TODO: 여기하기
 @ExtendWith(MockitoExtension.class)
 @DisplayName("토큰 서비스 유닛 테스트")
 class TokenServiceTest {
@@ -43,6 +43,8 @@ class TokenServiceTest {
     private SaveRefreshInfoPort saveRefreshInfoPort;
     @Mock
     private LoadRefreshInfoPort loadRefreshInfoPort;
+    @Mock
+    private LoadBanedTokenPort loadBanedTokenPort;
 
     @DisplayName("[성공] 토큰 생성")
     @Test
@@ -155,6 +157,26 @@ class TokenServiceTest {
         Assertions.assertThat(resolvedToken).isNotEqualTo(tokenInfo.getAccessToken());
     }
 
+    @DisplayName("[실패] 토큰 추출: Grant Type을 빼먹음")
+    @Test
+    void resolveTokenFailWithNotGrantType() {
+        // given
+        TokenizationUser user = User.builder()
+            .email(Email.of("dt10@naver.com"))
+            .authorities(Collections.singletonList(Authority.NORMAL))
+            .profile(Image.of("http://www.naver.com"))
+            .nickname(Nickname.of("nickn"))
+            .build();
+
+        TokenInfo tokenInfo = UserTokenProvider.INSTANCE.generateToken(user);
+
+        // when
+        String resolvedToken = tokenService.resolveToken(tokenInfo.getAccessToken());
+
+        // then
+        Assertions.assertThat(resolvedToken).isNull();
+    }
+
     @DisplayName("[성공] 토큰 리프레쉬 가능 여부")
     @Test
     void canRefresh() {
@@ -166,11 +188,33 @@ class TokenServiceTest {
                 .authorities(Collections.singletonList(Authority.NORMAL))
             .build());
 
+        given(loadBanedTokenPort.existsByAccessToken(tokenInfo.getAccessToken())).willReturn(false);
+
         // when
         boolean result = tokenService.canRefresh(tokenInfo.getAccessToken());
 
         // then
         Assertions.assertThat(result).isTrue();
+    }
+
+    @DisplayName("[실패] 토큰 리프레쉬 가능 여부: 밴 당한 토큰")
+    @Test
+    void canRefreshFailWithBaned() {
+        // given
+        TokenInfo tokenInfo = UserTokenProvider.INSTANCE.generateToken(User.builder()
+            .email(Email.of("do1@naver.com"))
+            .nickname(Nickname.of("nicknam"))
+            .profile(Image.of("http://www.naver.com"))
+            .authorities(Collections.singletonList(Authority.NORMAL))
+            .build());
+
+        given(loadBanedTokenPort.existsByAccessToken(tokenInfo.getAccessToken())).willReturn(true);
+
+        // when
+        boolean result = tokenService.canRefresh(tokenInfo.getAccessToken());
+
+        // then
+        Assertions.assertThat(result).isFalse();
     }
 
     @DisplayName("[실패] 토큰 리프레쉬 가능 여부: 옳지 못한 토큰")
@@ -210,6 +254,27 @@ class TokenServiceTest {
         verify(loadRefreshInfoPort, times(1)).findByRefreshToken(any());
     }
 
+    @DisplayName("[실패] 토큰 재발급: 밴당한 토큰")
+    @Test
+    void reissueFailWithBanned() {
+        // given
+        TokenizationUser user = User.builder()
+            .email(Email.of("do1@naver.com"))
+            .nickname(Nickname.of("nicknam"))
+            .profile(Image.of("http://www.naver.com"))
+            .authorities(Collections.singletonList(Authority.NORMAL))
+            .build();
+
+        TokenInfo tokenInfo = UserTokenProvider.INSTANCE.generateToken(user);
+
+        given(loadBanedTokenPort.existsByRefreshToken(tokenInfo.getRefreshToken())).willReturn(true);
+
+        // when, then
+        Assertions.assertThatThrownBy(
+            ()->tokenService.reissue(tokenInfo.getRefreshToken()))
+            .isInstanceOf(UnAuthorizedException.class);
+    }
+
     @DisplayName("[실패] 토큰 재발급: 잘못된 토큰")
     @Test
     void reissueFailWithInvalidToken() {
@@ -218,7 +283,6 @@ class TokenServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(()->tokenService.reissue(invalidToken)).isInstanceOf(UnAuthorizedException.class);
-        verify(loadRefreshInfoPort, times(0)).findByRefreshToken(any());
     }
 
     @DisplayName("[실패] 토큰 재발급: 저장된 리프레쉬 정보 없음")

@@ -4,13 +4,17 @@ import com.fundy.application.exception.custom.DuplicateInstanceException;
 import com.fundy.application.exception.custom.NoInstanceException;
 import com.fundy.application.exception.custom.ValidationException;
 import com.fundy.application.user.in.GetSecurityInfoUseCase;
+import com.fundy.application.user.in.LogoutUseCase;
 import com.fundy.application.user.in.SignUpUseCase;
+import com.fundy.application.user.in.dto.req.LogoutRequest;
 import com.fundy.application.user.in.dto.req.SignUpRequest;
 import com.fundy.application.user.in.dto.res.SecurityInfoResponse;
 import com.fundy.application.user.in.dto.res.SignUpResponse;
 import com.fundy.application.user.out.LoadUserPort;
+import com.fundy.application.user.out.SaveBanedTokenPort;
 import com.fundy.application.user.out.SaveUserPort;
 import com.fundy.application.user.out.ValidUserPort;
+import com.fundy.application.user.out.dto.req.SaveBanedTokenCommand;
 import com.fundy.application.user.out.dto.req.SaveUserCommand;
 import com.fundy.domain.user.User;
 import com.fundy.domain.user.interfaces.SecurityUser;
@@ -26,10 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class AuthService implements SignUpUseCase, GetSecurityInfoUseCase {
+public class AuthService implements SignUpUseCase, GetSecurityInfoUseCase, LogoutUseCase {
     private final SaveUserPort saveUserPort;
     private final ValidUserPort validUserPort;
     private final LoadUserPort loadUserPort;
+    private final SaveBanedTokenPort saveBanedTokenPort;
 
     @Transactional
     @Override
@@ -66,7 +71,7 @@ public class AuthService implements SignUpUseCase, GetSecurityInfoUseCase {
     }
 
     @Override
-    public SecurityInfoResponse getSecurityInfoByEmail(String email) {
+    public SecurityInfoResponse getSecurityInfoByEmail(final String email) {
         SecurityUser user = loadUserPort.findByEmail(email).orElseThrow(
             () -> new NoInstanceException("유저가 존재하지 않음"));
 
@@ -75,5 +80,11 @@ public class AuthService implements SignUpUseCase, GetSecurityInfoUseCase {
             .password(user.getEncodedPassword())
             .authorities(user.getAuthorities())
             .build();
+    }
+
+    @Transactional
+    @Override
+    public void logout(final LogoutRequest request) {
+        saveBanedTokenPort.save(SaveBanedTokenCommand.of(request.getAccessToken(), request.getRefreshToken()));
     }
 }
