@@ -1,6 +1,7 @@
 package com.fundy.api.controller.auth;
 
 import com.fundy.api.BaseIntegrationTest;
+import com.fundy.api.controller.auth.dto.req.RefreshTokenRequestBody;
 import com.fundy.api.controller.auth.dto.req.SignInRequestBody;
 import com.fundy.api.controller.auth.dto.req.SignUpRequestBody;
 import com.fundy.application.user.out.SaveRefreshInfoPort;
@@ -219,5 +220,75 @@ class AuthControllerTest extends BaseIntegrationTest {
         // then
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(jsonPath("$.result.accessToken").isNotEmpty());
+    }
+
+    @DisplayName("[성공] 로그아웃")
+    @Test
+    void logout() throws Exception {
+        // given
+        TokenInfo tokenInfo = UserTokenProvider.INSTANCE.generateToken(User.builder()
+                .email(Email.of("do01@naver.com"))
+                .nickname(Nickname.of("nic"))
+                .authorities(Collections.singletonList(Authority.NORMAL))
+                .profile(Image.of("http://www.naver.com"))
+            .build());
+
+        // when
+        ResultActions resultActions = mvc.perform(post("/auth/logout")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", String.format("%s %s", tokenInfo.getGrantType(), tokenInfo.getAccessToken()))
+                .content(objectMapper.writeValueAsBytes(new RefreshTokenRequestBody(tokenInfo.getRefreshToken())))
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print());
+
+        // then
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.result").value(true));
+    }
+
+    @DisplayName("[실패] 로그아웃: 올바르지 않은 access token")
+    @Test
+    void logoutFailWithAccessToken() throws Exception {
+        // given
+        TokenInfo tokenInfo = UserTokenProvider.INSTANCE.generateToken(User.builder()
+            .email(Email.of("do01@naver.com"))
+            .nickname(Nickname.of("nic"))
+            .authorities(Collections.singletonList(Authority.NORMAL))
+            .profile(Image.of("http://www.naver.com"))
+            .build());
+
+        // when
+        ResultActions resultActions = mvc.perform(post("/auth/logout")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Invalid_Token")
+                .content(objectMapper.writeValueAsBytes(new RefreshTokenRequestBody(tokenInfo.getRefreshToken())))
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print());
+
+        // then
+        resultActions.andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("[실패] 로그아웃: 올바르지 않은 GrantType")
+    @Test
+    void logoutFailWithGrantType() throws Exception {
+        // given
+        TokenInfo tokenInfo = UserTokenProvider.INSTANCE.generateToken(User.builder()
+            .email(Email.of("do01@naver.com"))
+            .nickname(Nickname.of("nic"))
+            .authorities(Collections.singletonList(Authority.NORMAL))
+            .profile(Image.of("http://www.naver.com"))
+            .build());
+
+        // when
+        ResultActions resultActions = mvc.perform(post("/auth/logout")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", tokenInfo.getAccessToken())
+                .content(objectMapper.writeValueAsBytes(new RefreshTokenRequestBody(tokenInfo.getRefreshToken())))
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print());
+
+        // then
+        resultActions.andExpect(status().isUnauthorized());
     }
 }

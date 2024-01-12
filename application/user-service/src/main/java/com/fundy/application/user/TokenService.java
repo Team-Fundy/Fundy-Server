@@ -11,6 +11,7 @@ import com.fundy.application.user.in.ReissueByRefreshTokenUseCase;
 import com.fundy.application.user.in.ResolveTokenUseCase;
 import com.fundy.application.user.in.dto.res.TokenInfoResponse;
 import com.fundy.application.user.in.dto.res.TokenizationUserInfoResponse;
+import com.fundy.application.user.out.LoadBanedTokenPort;
 import com.fundy.application.user.out.LoadRefreshInfoPort;
 import com.fundy.application.user.out.LoadUserPort;
 import com.fundy.application.user.out.SaveRefreshInfoPort;
@@ -35,6 +36,7 @@ public class TokenService implements GenerateTokenUseCase, IsVerifyAccessTokenUs
     private final LoadUserPort loadUserPort;
     private final SaveRefreshInfoPort saveRefreshInfoPort;
     private final LoadRefreshInfoPort loadRefreshInfoPort;
+    private final LoadBanedTokenPort loadBanedTokenPort;
 
     @Transactional
     @Override
@@ -72,7 +74,7 @@ public class TokenService implements GenerateTokenUseCase, IsVerifyAccessTokenUs
     public boolean isVerifyAccessToken(String accessToken) {
         if (accessToken == null)
             return false;
-        return userTokenProvider.isVerifyAccessToken(accessToken);
+        return userTokenProvider.isVerifyAccessToken(accessToken) && !loadBanedTokenPort.existsByAccessToken(accessToken);
     }
 
     @Override
@@ -100,12 +102,13 @@ public class TokenService implements GenerateTokenUseCase, IsVerifyAccessTokenUs
     public boolean canRefresh(String accessToken) {
         if (accessToken == null)
             return false;
-        return userTokenProvider.canRefresh(accessToken);
+        return userTokenProvider.canRefresh(accessToken) && !loadBanedTokenPort.existsByAccessToken(accessToken);
     }
 
     @Override
     public TokenInfoResponse reissue(String refreshToken) {
-        if (!userTokenProvider.isVerifyRefreshToken(refreshToken))
+        if (!userTokenProvider.isVerifyRefreshToken(refreshToken) ||
+            loadBanedTokenPort.existsByRefreshToken(refreshToken))
             throw new UnAuthorizedException("리프레쉬 토큰을 사용할 수 없음");
 
         TokenInfo tokenInfo = userTokenProvider.generateToken(loadRefreshInfoPort.findByRefreshToken(refreshToken).orElseThrow(
