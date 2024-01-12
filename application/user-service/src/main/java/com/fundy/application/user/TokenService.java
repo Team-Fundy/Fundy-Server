@@ -15,7 +15,9 @@ import com.fundy.application.user.out.LoadBanedTokenPort;
 import com.fundy.application.user.out.LoadRefreshInfoPort;
 import com.fundy.application.user.out.LoadUserPort;
 import com.fundy.application.user.out.SaveRefreshInfoPort;
+import com.fundy.application.user.out.UpdateRefreshInfoPort;
 import com.fundy.application.user.out.dto.req.SaveRefreshInfoCommand;
+import com.fundy.application.user.out.dto.req.UpdateRefreshTokenCommand;
 import com.fundy.domain.user.TokenInfo;
 import com.fundy.domain.user.UserTokenProvider;
 import com.fundy.domain.user.interfaces.TokenizationUser;
@@ -37,6 +39,7 @@ public class TokenService implements GenerateTokenUseCase, IsVerifyAccessTokenUs
     private final SaveRefreshInfoPort saveRefreshInfoPort;
     private final LoadRefreshInfoPort loadRefreshInfoPort;
     private final LoadBanedTokenPort loadBanedTokenPort;
+    private final UpdateRefreshInfoPort updateRefreshInfoPort;
 
     @Transactional
     @Override
@@ -105,6 +108,7 @@ public class TokenService implements GenerateTokenUseCase, IsVerifyAccessTokenUs
         return userTokenProvider.canRefresh(accessToken) && !loadBanedTokenPort.existsByAccessToken(accessToken);
     }
 
+    @Transactional
     @Override
     public TokenInfoResponse reissue(String refreshToken) {
         if (!userTokenProvider.isVerifyRefreshToken(refreshToken) ||
@@ -113,6 +117,8 @@ public class TokenService implements GenerateTokenUseCase, IsVerifyAccessTokenUs
 
         TokenInfo tokenInfo = userTokenProvider.generateToken(loadRefreshInfoPort.findByRefreshToken(refreshToken).orElseThrow(
             () -> new UnAuthorizedException("리프레쉬 토큰 정보가 없습니다")));
+
+        updateRefreshInfoPort.updateRefreshToken(UpdateRefreshTokenCommand.of(refreshToken, tokenInfo.getRefreshToken()));
 
         return TokenInfoResponse.builder()
             .grantType(tokenInfo.getGrantType())
