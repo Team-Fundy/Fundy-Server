@@ -2,13 +2,16 @@ package com.fundy.api.controller.auth;
 
 import com.fundy.api.common.response.GlobalExceptionResponse;
 import com.fundy.api.common.response.GlobalResponse;
+import com.fundy.api.controller.auth.dto.req.RefreshTokenRequestBody;
 import com.fundy.api.controller.auth.dto.req.SignInRequestBody;
 import com.fundy.api.controller.auth.dto.req.SignUpRequestBody;
 import com.fundy.api.security.authentication.AuthenticationHandler;
 import com.fundy.application.user.in.GenerateTokenUseCase;
+import com.fundy.application.user.in.LogoutUseCase;
 import com.fundy.application.user.in.ReissueByRefreshTokenUseCase;
 import com.fundy.application.user.in.ResolveTokenUseCase;
 import com.fundy.application.user.in.SignUpUseCase;
+import com.fundy.application.user.in.dto.req.LogoutRequest;
 import com.fundy.application.user.in.dto.req.SignUpRequest;
 import com.fundy.application.user.in.dto.res.SignUpResponse;
 import com.fundy.application.user.in.dto.res.TokenInfoResponse;
@@ -38,6 +41,7 @@ public class AuthController {
     private final AuthenticationHandler authenticationHandler;
     private final ReissueByRefreshTokenUseCase reissueByRefreshTokenUseCase;
     private final ResolveTokenUseCase resolveTokenUseCase;
+    private final LogoutUseCase logoutUseCase;
 
     @Operation(summary = "이메일 회원가입", description = "유저가 이메일로 회원가입")
     @ApiResponse(responseCode = "200", description = "성공", useReturnTypeSchema = true)
@@ -80,6 +84,23 @@ public class AuthController {
             .message("토큰 재발급")
             .result(reissueByRefreshTokenUseCase.reissue(
                 resolveTokenUseCase.resolveToken(request.getHeader("Authorization"))))
+            .build();
+    }
+
+    @Operation(summary = "로그아웃", description = "액세스 토큰과 리프레쉬 토큰으로 로그아웃",
+        security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "성공", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "400", description = "에러 발생",
+        content = @Content(schema = @Schema(implementation = GlobalExceptionResponse.class)))
+    @ApiResponse(responseCode = "401", description = "토큰 에러",
+        content = @Content(schema = @Schema(implementation = GlobalExceptionResponse.class)))
+    @PostMapping("/logout")
+    public final GlobalResponse<Boolean> logout(HttpServletRequest request, @RequestBody @Valid RefreshTokenRequestBody requestBody) {
+        logoutUseCase.logout(LogoutRequest.of(
+            resolveTokenUseCase.resolveToken(request.getHeader("Authorization")), requestBody.getRefreshToken()));
+        return GlobalResponse.<Boolean>builder()
+            .message("로그아웃됨")
+            .result(true)
             .build();
     }
 }

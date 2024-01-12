@@ -49,7 +49,7 @@ public class AuthenticationFailEntryPoint implements AuthenticationEntryPoint {
         }
 
         response.getWriter().write(mapper.writeValueAsString(GlobalCanRefreshResponse.builder()
-            .message("토큰 만료")
+            .message("올바르지 않은 토큰")
             .canRefresh(canTokenRefreshUseCase.canRefresh(accessToken))
             .build()));
     }
