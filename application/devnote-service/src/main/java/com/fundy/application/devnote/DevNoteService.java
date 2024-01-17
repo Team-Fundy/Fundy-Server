@@ -23,8 +23,10 @@ public class DevNoteService implements DevNoteFindByIdUseCase {
         DevNote devNote = loadDevNotePort.findById(id).orElseThrow(() -> new NoInstanceException("해당 id의 개발노트가 존재하지 않음"));
 
         return DevNoteDetailResponse.builder()
+                .id(devNote.getId().getId())
                 .title(devNote.getTitle())
-                .contents(devNote.getContents())
+                .content(devNote.getContent())
+                .createdAt(devNote.getCreatedAt())
                 .build();
     }
 

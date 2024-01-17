@@ -18,7 +18,7 @@ public class DevNote {
 
     private DevNoteId id;
 
-    private String contents;
+    private String content;
 
     private String title;
 

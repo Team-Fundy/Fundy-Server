@@ -20,7 +20,7 @@ public class DevNoteMapper {
         return DevNote.builder()
                 .id(DevNoteId.of(model.getId()))
                 .title(model.getTitle())
-                .contents(model.getContents())
+                .content(model.getContent())
                 .thumbnail(Image.of(model.getThumbnail()))
                 .createdAt(model.getCreatedAt())
                 .build();

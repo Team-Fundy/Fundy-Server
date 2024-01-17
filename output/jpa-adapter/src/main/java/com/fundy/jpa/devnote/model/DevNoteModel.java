@@ -23,8 +23,8 @@ public class DevNoteModel {
     private Long id;
     @Column(name = "title")
     private String title;
-    @Column(name = "contents")
-    private String contents;
+    @Column(name = "content")
+    private String content;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
@@ -35,7 +35,7 @@ public class DevNoteModel {
     private DevNoteModel(String title, String contents, String thumbnail) {
         this.thumbnail = thumbnail;
         this.title = title;
-        this.contents = contents;
+        this.content = contents;
     }
 
 

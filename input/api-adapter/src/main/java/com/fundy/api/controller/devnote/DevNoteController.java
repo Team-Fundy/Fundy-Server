@@ -28,7 +28,7 @@ public class DevNoteController {
     @ApiResponse(responseCode = "200", description = "성공", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "400", description = "에러 발생",
             content = @Content(schema = @Schema(implementation = GlobalExceptionResponse.class)))
-    @GetMapping("/{id}")
+    @GetMapping("/findbyid/{id}")
     public final GlobalResponse<DevNoteDetailResponse> getDevNoteById(@PathVariable(name = "id") Long id) {
         return GlobalResponse.<DevNoteDetailResponse>builder()
                 .message("개발노트 상세 조회")
