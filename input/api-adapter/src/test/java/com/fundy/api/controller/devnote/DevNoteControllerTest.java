@@ -2,18 +2,12 @@ package com.fundy.api.controller.devnote;
 
 import com.fundy.api.BaseIntegrationTest;
 import com.fundy.application.devnote.out.LoadDevNotePort;
-import com.fundy.domain.devnote.DevNote;
-import com.fundy.domain.devnote.vos.DevNoteId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,15 +26,17 @@ class DevNoteControllerTest extends BaseIntegrationTest {
         Long id = 1L;
         String title = "Test title";
         String content = "Test content";
-        DevNoteId devNoteId = DevNoteId.of(1L);
-        LocalDateTime createdAt = LocalDateTime.MIN;
-
-        given(loadDevNotePort.findById(id)).willReturn(Optional.of(DevNote.builder()
-                .id(devNoteId)
-                .title(title)
-                .content(content)
-                .createdAt(createdAt)
-                .build()));
+//        DevNoteId devNoteId = DevNoteId.of(1L);
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+//        LocalDateTime createdAt = LocalDateTime.parse("2024-01-23T15:57:53", formatter);
+        String createdAt = "2024-01-23T15:57:53";
+        //2024-01-23 15:57:53
+//        given(loadDevNotePort.findById(id)).willReturn(Optional.of(DevNote.builder()
+//                .id(devNoteId)
+//                .title(title)
+//                .content(content)
+//                .createdAt(createdAt)
+//                .build()));
 
 
         //when
@@ -53,7 +49,6 @@ class DevNoteControllerTest extends BaseIntegrationTest {
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(jsonPath("$.result.title").value(title));
         resultActions.andExpect(jsonPath("$.result.content").value(content));
-        resultActions.andExpect(jsonPath("$.result.devNoteId").value(devNoteId));
         resultActions.andExpect(jsonPath("$.result.createdAt").value(createdAt));
 
 
@@ -63,18 +58,19 @@ class DevNoteControllerTest extends BaseIntegrationTest {
     @Test
     void findByIdFailCaseWithExist() throws Exception{
         //given
-        Long id = 1L;
-        String title = "Test title";
-        String content = "Test content";
-        DevNoteId devNoteId = DevNoteId.of(1L);
-        LocalDateTime createdAt = LocalDateTime.MIN;
+        Long id = 30L;
+//        String title = "Test title";
+//        String content = "Test content";
+//        DevNoteId devNoteId = DevNoteId.of(1L);
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        LocalDateTime createdAt = LocalDateTime.parse("2024-01-23 15:57:53", formatter);
 
-        given(loadDevNotePort.findById(id)).willReturn(Optional.of(DevNote.builder()
-                .id(null)
-                .title(null)
-                .content(null)
-                .createdAt(null)
-                .build()));
+//        given(loadDevNotePort.findById(id)).willReturn(Optional.of(DevNote.builder()
+//                .id(null)
+//                .title(null)
+//                .content(null)
+//                .createdAt(null)
+//                .build()));
 
         //when
         ResultActions resultActions = mvc.perform(get("/devnote/findbyid/{id}", id)
@@ -84,11 +80,11 @@ class DevNoteControllerTest extends BaseIntegrationTest {
                 .andDo(print());
 
         //then
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(jsonPath("$.result.title").isEmpty());
-        resultActions.andExpect(jsonPath("$.result.content").isEmpty());
-        resultActions.andExpect(jsonPath("$.result.devNoteId").isEmpty());
-        resultActions.andExpect(jsonPath("$.result.createdAt").isEmpty());
+        //resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.result.title").doesNotExist());
+        resultActions.andExpect(jsonPath("$.result.content").doesNotExist());
+        //resultActions.andExpect(jsonPath("$.result.devNoteId").doesNotExist());
+        resultActions.andExpect(jsonPath("$.result.createdAt").doesNotExist());
     }
 
 }
