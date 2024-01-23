@@ -1,5 +1,6 @@
 package com.fundy.application.devnote.in.dto.res;
 
+import com.fundy.domain.devnote.vos.DevNoteId;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class DevNoteDetailResponse {
-    private Long id;
+    private DevNoteId id;
     private String title;
     private String content;
     private LocalDateTime createdAt;

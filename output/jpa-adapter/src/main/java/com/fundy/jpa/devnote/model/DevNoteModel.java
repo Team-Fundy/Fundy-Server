@@ -32,10 +32,10 @@ public class DevNoteModel {
     private String thumbnail;
 
     @Builder
-    private DevNoteModel(String title, String contents, String thumbnail) {
+    private DevNoteModel(String title, String content, String thumbnail) {
         this.thumbnail = thumbnail;
         this.title = title;
-        this.content = contents;
+        this.content = content;
     }
 
 

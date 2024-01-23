@@ -1,9 +1,12 @@
 package com.fundy.jpa.devnote.adapter;
 
 import com.fundy.application.devnote.out.LoadDevNotePort;
+import com.fundy.application.devnote.out.SaveDevNotePort;
 import com.fundy.application.devnote.out.ValidDevNotePort;
+import com.fundy.application.devnote.out.command.SaveDevNoteCommand;
 import com.fundy.domain.devnote.DevNote;
 import com.fundy.jpa.devnote.mapper.DevNoteMapper;
+import com.fundy.jpa.devnote.model.DevNoteModel;
 import com.fundy.jpa.devnote.repository.DevNoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class DevNotePersistenceAdapter implements LoadDevNotePort, ValidDevNotePort {
+public class DevNotePersistenceAdapter implements LoadDevNotePort, ValidDevNotePort, SaveDevNotePort {
     private final DevNoteRepository devNoteRepository;
     private final DevNoteMapper mapper;
 
@@ -32,5 +35,15 @@ public class DevNotePersistenceAdapter implements LoadDevNotePort, ValidDevNoteP
     public boolean existById(Long id) {
         return true;
     }
+
+    //저장할 거 추가 필요
+    @Override
+    public Long saveDevNote(SaveDevNoteCommand command) {
+        return devNoteRepository.save(DevNoteModel.builder()
+                        .title(command.getTitle())
+                        .content(command.getContent())
+                    .build()).getId();
+    }
+
 
 }

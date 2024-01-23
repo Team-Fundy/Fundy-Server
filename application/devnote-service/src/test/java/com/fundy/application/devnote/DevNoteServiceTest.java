@@ -4,6 +4,7 @@ import com.fundy.application.devnote.in.dto.res.DevNoteDetailResponse;
 import com.fundy.application.devnote.out.LoadDevNotePort;
 import com.fundy.application.exception.custom.NoInstanceException;
 import com.fundy.domain.devnote.DevNote;
+import com.fundy.domain.devnote.vos.DevNoteId;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -35,11 +37,15 @@ class DevNoteServiceTest {
 
         //given
         Long id = 1L;
+        DevNoteId devNoteId = DevNoteId.of(1L);
         String title = "Test title";
         String content = "Test content";
+        LocalDateTime createdAt = LocalDateTime.MIN;
         given(loadDevNotePort.findById(id)).willReturn(Optional.of(DevNote.builder()
+                        .id(devNoteId)
                         .title(title)
                         .content(content)
+                        .createdAt(createdAt)
                         .build()));
 
         //when
@@ -47,6 +53,7 @@ class DevNoteServiceTest {
 
 
         //then
+        Assertions.assertThat(result.getId()).isEqualTo(devNoteId);
         Assertions.assertThat(result.getTitle()).isEqualTo(title);
         Assertions.assertThat(result.getContent()).isEqualTo(content);
         verify(loadDevNotePort, times(1)).findById(any());
