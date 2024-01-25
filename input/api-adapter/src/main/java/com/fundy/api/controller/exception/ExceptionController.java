@@ -30,7 +30,7 @@ public class ExceptionController {
             .stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
             .collect(Collectors.toList()));
     }
-    
+
     @ExceptionHandler({UnAuthorizedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public final GlobalExceptionResponse handleUnAuthorizedException(final UnAuthorizedException e) {
