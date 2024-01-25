@@ -8,6 +8,5 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class SaveDevNoteResponse {
-    private Long id;
     private String title;
 }

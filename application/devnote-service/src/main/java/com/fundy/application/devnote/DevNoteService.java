@@ -42,14 +42,12 @@ public class DevNoteService implements DevNoteFindByIdUseCase, SaveDevNoteUseCas
     public SaveDevNoteResponse saveDevNote(final SaveDevNoteRequest saveDevNoteRequest) {
 
         saveDevNotePort.saveDevNote(SaveDevNoteCommand.builder()
-                        .id(saveDevNoteRequest.getId())
                         .title(saveDevNoteRequest.getTitle())
                         .content(saveDevNoteRequest.getContent())
-                        .createdAt(saveDevNoteRequest.getCreatedAt())
+                        .thumbnail(saveDevNoteRequest.getThumbnail())
                         .build());
 
         return SaveDevNoteResponse.builder()
-                .id(saveDevNoteRequest.getId())
                 .title(saveDevNoteRequest.getTitle())
                 .build();
     }

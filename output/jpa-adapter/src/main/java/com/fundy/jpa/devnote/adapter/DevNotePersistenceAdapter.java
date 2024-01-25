@@ -33,15 +33,15 @@ public class DevNotePersistenceAdapter implements LoadDevNotePort, ValidDevNoteP
     }
     @Override
     public boolean existById(Long id) {
-        return true;
+        return devNoteRepository.existsById(id);
     }
 
-    //저장할 거 추가 필요
     @Override
     public Long saveDevNote(SaveDevNoteCommand command) {
         return devNoteRepository.save(DevNoteModel.builder()
                         .title(command.getTitle())
                         .content(command.getContent())
+                        .thumbnail(command.getThumbnail())
                     .build()).getId();
     }
 

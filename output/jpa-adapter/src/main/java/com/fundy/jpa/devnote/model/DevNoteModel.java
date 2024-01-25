@@ -31,6 +31,8 @@ public class DevNoteModel {
     @Column(name = "thumbnail")
     private String thumbnail;
 
+    //TODO : 더 많은 내용이 필요할 수 있음
+    //FIXME : 개발노트에 필요한 도메인 추가
     @Builder
     private DevNoteModel(String title, String content, String thumbnail) {
         this.thumbnail = thumbnail;

@@ -2,6 +2,9 @@ package com.fundy.api.controller.devnote;
 
 import com.fundy.api.BaseIntegrationTest;
 import com.fundy.application.devnote.out.LoadDevNotePort;
+import com.fundy.application.devnote.out.SaveDevNotePort;
+import com.fundy.jpa.devnote.model.DevNoteModel;
+import com.fundy.jpa.devnote.repository.DevNoteRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,11 @@ class DevNoteControllerTest extends BaseIntegrationTest {
     @Autowired
     private LoadDevNotePort loadDevNotePort;
 
+    @Autowired
+    private SaveDevNotePort saveDevNotePort;
+    @Autowired
+    private DevNoteRepository devNoteRepository;
+
     @DisplayName("[성공] 아이디로 개발노트 조회")
     @Test
     void findByIdSuccessCase() throws Exception {
@@ -26,6 +34,7 @@ class DevNoteControllerTest extends BaseIntegrationTest {
         Long id = 1L;
         String title = "Test title";
         String content = "Test content";
+        String thumbnail = "asdfasdfasdf";
 //        DevNoteId devNoteId = DevNoteId.of(1L);
 //        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 //        LocalDateTime createdAt = LocalDateTime.parse("2024-01-23T15:57:53", formatter);
@@ -37,7 +46,11 @@ class DevNoteControllerTest extends BaseIntegrationTest {
 //                .content(content)
 //                .createdAt(createdAt)
 //                .build()));
-
+        devNoteRepository.save(DevNoteModel.builder()
+                        .title(title)
+                        .content(content)
+                        .thumbnail(thumbnail)
+                .build());
 
         //when
         ResultActions resultActions = mvc.perform(get("/devnote/findbyid/{id}", id)
@@ -49,7 +62,6 @@ class DevNoteControllerTest extends BaseIntegrationTest {
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(jsonPath("$.result.title").value(title));
         resultActions.andExpect(jsonPath("$.result.content").value(content));
-        resultActions.andExpect(jsonPath("$.result.createdAt").value(createdAt));
 
 
     }

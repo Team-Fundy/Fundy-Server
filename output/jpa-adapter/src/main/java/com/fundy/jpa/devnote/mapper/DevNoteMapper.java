@@ -6,7 +6,8 @@ import com.fundy.domain.devnote.vos.Image;
 import com.fundy.jpa.devnote.model.DevNoteModel;
 import org.springframework.stereotype.Component;
 
-//일단 따라함 수정 필요
+//TODO : 수정이 필요함
+//FIXME : Mapper의 역할에 맞게 추가
 @Component
 public class DevNoteMapper {
     public final DevNoteModel domainToEntity(DevNote devNote) {
