@@ -1,5 +1,6 @@
 package com.fundy.jpa.devnote.adapter;
 
+import com.fundy.application.devnote.out.LoadDevNoteListPort;
 import com.fundy.application.devnote.out.LoadDevNotePort;
 import com.fundy.application.devnote.out.SaveDevNotePort;
 import com.fundy.application.devnote.out.ValidDevNotePort;
@@ -11,12 +12,14 @@ import com.fundy.jpa.devnote.repository.DevNoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
-public class DevNotePersistenceAdapter implements LoadDevNotePort, ValidDevNotePort, SaveDevNotePort {
+public class DevNotePersistenceAdapter implements LoadDevNotePort, ValidDevNotePort, SaveDevNotePort, LoadDevNoteListPort {
     private final DevNoteRepository devNoteRepository;
     private final DevNoteMapper mapper;
 
@@ -43,6 +46,15 @@ public class DevNotePersistenceAdapter implements LoadDevNotePort, ValidDevNoteP
                         .content(command.getContent())
                         .thumbnail(command.getThumbnail())
                     .build()).getId();
+    }
+
+    //FIXME : 구현 필요
+    @Override
+    public List<DevNote> listFindById(Long id) {
+
+        List<DevNote> devNoteList = new ArrayList<>();
+//        devNoteList = devNoteRepository.findById(id);
+        return devNoteList;
     }
 
 

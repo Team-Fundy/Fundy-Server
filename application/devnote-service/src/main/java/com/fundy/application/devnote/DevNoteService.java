@@ -4,7 +4,6 @@ import com.fundy.application.devnote.in.DevNoteFindByIdUseCase;
 import com.fundy.application.devnote.in.SaveDevNoteUseCase;
 import com.fundy.application.devnote.in.dto.req.SaveDevNoteRequest;
 import com.fundy.application.devnote.in.dto.res.DevNoteDetailResponse;
-import com.fundy.application.devnote.in.dto.res.SaveDevNoteResponse;
 import com.fundy.application.devnote.out.LoadDevNotePort;
 import com.fundy.application.devnote.out.SaveDevNotePort;
 import com.fundy.application.devnote.out.command.SaveDevNoteCommand;
@@ -39,7 +38,7 @@ public class DevNoteService implements DevNoteFindByIdUseCase, SaveDevNoteUseCas
 
     @Override
     @Transactional
-    public SaveDevNoteResponse saveDevNote(final SaveDevNoteRequest saveDevNoteRequest) {
+    public SaveDevNoteRequest saveDevNote(final SaveDevNoteRequest saveDevNoteRequest) {
 
         saveDevNotePort.saveDevNote(SaveDevNoteCommand.builder()
                         .title(saveDevNoteRequest.getTitle())
@@ -47,8 +46,10 @@ public class DevNoteService implements DevNoteFindByIdUseCase, SaveDevNoteUseCas
                         .thumbnail(saveDevNoteRequest.getThumbnail())
                         .build());
 
-        return SaveDevNoteResponse.builder()
+        return SaveDevNoteRequest.builder()
                 .title(saveDevNoteRequest.getTitle())
+                .content(saveDevNoteRequest.getContent())
+                .thumbnail(saveDevNoteRequest.getThumbnail())
                 .build();
     }
 
